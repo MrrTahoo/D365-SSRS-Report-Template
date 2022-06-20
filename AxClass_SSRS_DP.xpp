@@ -1,0 +1,61 @@
+﻿[SRSReportParameterAttribute(classstr())]
+class SSRS_DP extends SrsReportDataProviderPreProcessTempDB
+{
+    PurchaseOrderHeaderTmp  purchaseOrderHeaderTmp;
+    PurchaseOrderLinesTmp   purchaseOrderLinesTmp;
+
+    [SRSReportDataSetAttribute(tableStr(PurchaseOrderHeaderTmp))]
+    public PurchaseOrderHeaderTmp getPurchaseOrderHeaderTmp()
+    {
+        select * from purchaseOrderHeaderTmp;
+        return purchaseOrderHeaderTmp;
+    }
+
+    [SRSReportDataSetAttribute(tableStr(PurchaseOrderLinesTmp))]
+    public PurchaseOrderLinesTmp getPurchaseOrderLinesTmp()
+    {
+        select * from purchaseOrderLinesTmp;
+        return purchaseOrderLinesTmp;
+    }
+
+    public void processReport()
+    {
+        PurchTable  purchTable;
+        PurchLine   purchLine;
+        PurchaseOrderContract contract;
+        PurchId     purchId;
+       
+        contract = this.parmDataContract() as PurchaseOrderContract;
+        purchId = contract.parmPurchId();
+
+        select * from purchTable
+            where purchTable.PurchId == purchId;
+
+        purchaseOrderHeaderTmp.PurchId = purchTable.PurchId;
+        purchaseOrderHeaderTmp.InvoiceAccount = purchTable.InvoiceAccount;
+        purchaseOrderHeaderTmp.OrderAccount = purchTable.OrderAccount;
+        purchaseOrderHeaderTmp.PurchName = purchTable.PurchName;
+        purchaseOrderHeaderTmp.InclTax = purchTable.InclTax;
+        purchaseOrderHeaderTmp.PaymMode = purchTable.PaymMode;
+        purchaseOrderHeaderTmp.PurchStatus = purchTable.PurchStatus;
+        purchaseOrderHeaderTmp.CurrencyCode = purchTable.CurrencyCode;
+        purchaseOrderHeaderTmp.DeliveryDate = purchTable.DeliveryDate;
+        purchaseOrderHeaderTmp.insert();
+
+        while select * from purchLine
+            where purchLine.PurchId == purchTable.PurchId
+        {
+            purchaseOrderLinesTmp.LineNumber = purchLine.LineNumber;
+            purchaseOrderLinesTmp.ItemId = purchLine.ItemId;
+            purchaseOrderLinesTmp.PurchQty = purchLine.PurchQty;
+            purchaseOrderLinesTmp.PurchPrice = purchLine.PurchPrice;
+            purchaseOrderLinesTmp.PurchUnit = purchLine.PurchUnit;
+            purchaseOrderLinesTmp.PriceUnit = purchLine.PriceUnit;
+            purchaseOrderLinesTmp.LineAmount = purchLine.LineAmount;
+            purchaseOrderLinesTmp.VendAccount = purchLine.VendAccount;
+            purchaseOrderLinesTmp.VendGroup = purchLine.VendGroup;
+            purchaseOrderLinesTmp.insert();
+        }
+    }
+
+}

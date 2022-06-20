@@ -1,0 +1,12 @@
+﻿class SSRS_Controller extends SrsReportRunController
+{
+    public static void main(Args _args)
+    {
+        PurchaseOrderController controller = new PurchaseOrderController();
+        controller.parmReportName(ssrsReportStr(PurchaseOrderReport,Report));
+        controller.parmArgs(_args);
+        controller.parmShowDialog(false);
+        controller.startOperation();
+    }
+
+}

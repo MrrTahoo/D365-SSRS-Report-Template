@@ -1,0 +1,12 @@
+﻿[DataContractAttribute]
+class SSRS_Contract
+{
+    PurchId purchId;
+    [DataMemberAttribute('Purchase Id')]
+    public PurchId parmPurchId(PurchId _purchId = PurchId)
+    {
+        purchId = _purchId;
+        return purchId;
+    }
+
+}
